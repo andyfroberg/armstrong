@@ -1,6 +1,8 @@
 import os
 import sys
 
+import time
+
 class Armstrong:
     def __init__(self):
         self.a_nums_found = []
@@ -29,5 +31,9 @@ class Armstrong:
 if __name__ == "__main__":
     a = Armstrong()
     num, proc = a.get_input()
+    start_time = time.time()
     a.calculate(num, proc)
+    program_runtime = round((time.time() - start_time) * 1000)
     a.print_output()
+    print(f'It took {program_runtime} milliseconds to complete'
+          f' this task.')
