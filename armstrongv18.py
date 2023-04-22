@@ -12,9 +12,8 @@ def main():
     child_list = []
     for p in range(1, proc + 1):
         pid = os.fork()
-
         if pid < 0:
-            print(f'Fork failed')
+            raise OSError(f'Fork failed')
             exit(1)
         elif pid == 0:
             # pass  #calculate nums
@@ -27,6 +26,7 @@ def main():
                 if candidate_sum == n:
                     child_list.append(n)
             if child_list:
+                write_child_nums_to_file(os.getpid(), child_list)
                 print(f'Child process PID: {os.getpid()} found {child_list}')
             os._exit(0)
         else:  # pid > 0
@@ -38,15 +38,29 @@ def main():
 
     program_runtime = round((time.time() - start_time) * 1000)
     print(f'It took {program_runtime} milliseconds to complete this task.')
-
+    print(f'Armstrong numbers found: {read_child_nums_from_file()}')
 
 
 def write_child_nums_to_file(pid, child_nums):
     with open(f'nums/{pid}.txt', 'w') as f:
-        f.write(f'[')
+        # f.write(f'[')
         for num in child_nums:
-            f.write(f'{num}, ')
-        f.write(f']')
+            f.write(f'{num} ')
+        # f.write(f']')
+
+def read_child_nums_from_file():
+    all_nums = ''
+    for file in os.listdir(f'nums/'):
+        if file == '.DS_Store':
+            continue
+        else:
+            with open(f'nums/{file}', 'r') as r:
+                nums = r.readlines()
+                for num in nums:
+                    all_nums += f'{num}, '
+    return all_nums[:-2]
+
+
 
 def get_input():
     # add input validation
