@@ -30,12 +30,14 @@ def calculate(number, processes, start_time):
             if child_list:
                 print(f'Child process PID: {pid} found {child_list}')
                 # self.write_child_nums_to_file(pid, child_list)
-            program_runtime = round((time.time() - start_time) * 1000)
-            print(f'It took {program_runtime} milliseconds to complete this task.')
-            os.waitpid(pid, 0)
-            exit(0)
+            if os.waitpid(pid, 0):
+                child_processes.remove(pid)
+                if not child_processes:
+                    runtime = round((time.time() - start_time) * 1000)
+                    print(f'Armstrong took {runtime} milliseconds')
         else:  # pid < 0
             raise OSError('Fork failed.')
+
 
 def write_child_nums_to_file(pid, child_nums):
     with open(f'nums/{pid}.txt', 'w') as f:

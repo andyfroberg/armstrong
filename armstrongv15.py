@@ -11,10 +11,12 @@ def main():
 
 def calculate(number, processes, start_time):
     child_processes = []
-    for p in range(1, processes + 1):
-        child_processes.append(os.fork())
+    for i, p in enumerate(range(1, processes + 1), start=1):
+        child_processes.append((i, os.fork()))
 
-    for i, pid in enumerate(child_processes, start=1):
+
+
+    while child_processes:
         if pid == 0:
             pass
         elif pid > 0:
@@ -30,12 +32,17 @@ def calculate(number, processes, start_time):
             if child_list:
                 print(f'Child process PID: {pid} found {child_list}')
                 # self.write_child_nums_to_file(pid, child_list)
-            program_runtime = round((time.time() - start_time) * 1000)
-            print(f'It took {program_runtime} milliseconds to complete this task.')
-            os.waitpid(pid, 0)
+            if len(child_processes) > 1:
+                child_processes.remove(pid)
+            if len(child_processes) == 1:
+                program_runtime = round((time.time() - start_time) * 1000)
+                print(f'It took {program_runtime} milliseconds to complete this task.')
+            if os.waitpid(pid, 0):
+                child_processes.remove(pid)
             exit(0)
         else:  # pid < 0
             raise OSError('Fork failed.')
+
 
 def write_child_nums_to_file(pid, child_nums):
     with open(f'nums/{pid}.txt', 'w') as f:
