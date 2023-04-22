@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import os
 import sys
 import time
@@ -15,11 +13,10 @@ class Armstrong:
         self.calculate(self.num, self.proc)
 
     def calculate(self, number, processes):
+        children = []
         for p in range(1, processes + 1):
             pid = os.fork()
             if pid == 0:
-                pass
-            elif pid > 0:
                 child_list = []
                 for n in range(9 + p, number + 1, processes):
                     digits = str(n)
@@ -31,21 +28,13 @@ class Armstrong:
                         child_list.append(n)
                 if child_list:
                     print(f'Child process PID: {pid} found {child_list}')
-                    self.a_nums_found.append(child_list)
-                    self.write_child_nums_to_file(pid, child_list)
-                os.waitpid(pid, 0)
-                exit(0)
-                    # program_runtime = round((time.time() - self.start_time) * 1000)
-                    # print(f'It took {program_runtime} milliseconds to complete this task.')
+            elif pid > 0:
+                children.append(pid)
+                for i, child in enumerate(children):
+                    os.waitpid(child, 0)
             else:  # pid < 0
                 raise OSError('Fork failed.')
 
-    def write_child_nums_to_file(self, pid, child_nums):
-        with open(f'nums/{pid}.txt', 'w') as f:
-            f.write(f'[')
-            for num in child_nums:
-                f.write(f'{num}, ')
-            f.write(f']')
 
     def get_input(self):
         # add input validation
