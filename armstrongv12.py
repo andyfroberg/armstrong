@@ -2,6 +2,7 @@ import os
 import sys
 import time
 
+
 class Armstrong:
     def __init__(self):
         self.a_nums_found = []
@@ -16,15 +17,6 @@ class Armstrong:
             pid = os.fork()
             if pid == 0:
                 pass
-                # for n in range(9 + p, number + 1, processes):
-                #     digits = str(n)
-                #     num_length = len(digits)
-                #     candidate_sum = 0
-                #     for digit in digits:
-                #         candidate_sum += int(digit) ** num_length
-                #     if candidate_sum == n:
-                #         self.a_nums_found.append(n)
-                # print(f'Child process PID: {os.getpid()} found {self.a_nums_found}')
             elif pid > 0:
                 child_list = []
                 for n in range(9 + p, number + 1, processes):
@@ -37,13 +29,9 @@ class Armstrong:
                         child_list.append(n)
                 if child_list:
                     print(f'Child process PID: {pid} found {child_list}')
-                #
-                #
                 if os.waitpid(pid, 0):
                     program_runtime = round((time.time() - self.start_time) * 1000)
                     print(f'It took {program_runtime} milliseconds to complete this task.')
-
-                return self.a_nums_found
                 exit(1)
             else:  # pid < 0
                 raise OSError('Fork failed.')
