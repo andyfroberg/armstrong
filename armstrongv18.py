@@ -4,19 +4,21 @@ import os
 import sys
 import time
 
+
 def main():
     num, proc = get_input()
     start_time = time.time()
-    calculate(num, proc, start_time)
-
-def calculate(number, processes, start_time):
     child_processes = []
     child_list = []
-    for p in range(1, processes + 1):
+    for p in range(1, proc + 1):
         pid = os.fork()
-        if pid == 0:
+
+        if pid < 0:
+            print(f'Fork failed')
+            exit(1)
+        elif pid == 0:
             # pass  #calculate nums
-            for n in range(9 + p, number + 1, processes):
+            for n in range(9 + p, num + 1, proc):
                 digits = str(n)
                 num_length = len(digits)
                 candidate_sum = 0
@@ -24,25 +26,20 @@ def calculate(number, processes, start_time):
                     candidate_sum += int(digit) ** num_length
                 if candidate_sum == n:
                     child_list.append(n)
-            # if child_list:
-            #     print(f'Child process PID: {pid} found {child_list}')
-                # self.write_child_nums_to_file(pid, child_list)
-        elif pid > 0:
+            if child_list:
+                print(f'Child process PID: {os.getpid()} found {child_list}')
+            os._exit(0)
+        else:  # pid > 0
             child_processes.append(pid)
             # exit(0)
-        else:  # pid < 0
-            raise OSError('Fork failed.')
 
     for pid in child_processes:
-        if child_list:
-            print(f'Child process PID: {pid} found {child_list}')
+        os.waitpid(pid, 0)
 
-        # Do we need to handle something that is not "0"
-        # (17976, 0)
-        # (17974, 0)
-        # (17975, 256)  Do we need to handle this?
-        print(os.waitpid(pid, 0))
-        # exit(0)
+    program_runtime = round((time.time() - start_time) * 1000)
+    print(f'It took {program_runtime} milliseconds to complete this task.')
+
+
 
 def write_child_nums_to_file(pid, child_nums):
     with open(f'nums/{pid}.txt', 'w') as f:

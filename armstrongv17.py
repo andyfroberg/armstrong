@@ -33,16 +33,8 @@ def calculate(number, processes, start_time):
         else:  # pid < 0
             raise OSError('Fork failed.')
 
-    for pid in child_processes:
-        if child_list:
-            print(f'Child process PID: {pid} found {child_list}')
-
-        # Do we need to handle something that is not "0"
-        # (17976, 0)
-        # (17974, 0)
-        # (17975, 256)  Do we need to handle this?
-        print(os.waitpid(pid, 0))
-        # exit(0)
+    print(child_processes)
+    os.waitpid(child_processes[0], 0)
 
 def write_child_nums_to_file(pid, child_nums):
     with open(f'nums/{pid}.txt', 'w') as f:
