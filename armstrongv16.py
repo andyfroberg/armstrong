@@ -11,15 +11,13 @@ def main():
 
 def calculate(number, processes, start_time):
     child_processes = []
+    child_list = []
     for p in range(1, processes + 1):
-        child_processes.append(os.fork())
-
-    for i, pid in enumerate(child_processes, start=1):
+        pid = os.fork()
         if pid == 0:
-            pass
-        elif pid > 0:
+            # pass  #calculate nums
             child_list = []
-            for n in range(9 + i, number + 1, processes):
+            for n in range(9 + p, number + 1, processes):
                 digits = str(n)
                 num_length = len(digits)
                 candidate_sum = 0
@@ -27,17 +25,46 @@ def calculate(number, processes, start_time):
                     candidate_sum += int(digit) ** num_length
                 if candidate_sum == n:
                     child_list.append(n)
-            if child_list:
-                print(f'Child process PID: {pid} found {child_list}')
+            # if child_list:
+            #     print(f'Child process PID: {pid} found {child_list}')
                 # self.write_child_nums_to_file(pid, child_list)
-            if os.waitpid(pid, 0):
-                child_processes.remove(pid)
-                if not child_processes:
-                    runtime = round((time.time() - start_time) * 1000)
-                    print(f'Armstrong took {runtime} milliseconds')
+        elif pid > 0:
+            child_processes.append(pid)
         else:  # pid < 0
             raise OSError('Fork failed.')
 
+
+    for pid in child_processes:
+        print(f'Child process PID: {pid} found {child_list}')
+        os.waitpid(pid, 0)
+        exit(0)
+
+
+
+
+    # for i, pid in enumerate(child_processes, start=1):
+    #     if pid == 0:
+    #         pass
+    #     elif pid > 0:
+    #         child_list = []
+    #         for n in range(9 + i, number + 1, processes):
+    #             digits = str(n)
+    #             num_length = len(digits)
+    #             candidate_sum = 0
+    #             for digit in digits:
+    #                 candidate_sum += int(digit) ** num_length
+    #             if candidate_sum == n:
+    #                 child_list.append(n)
+    #         if child_list:
+    #             print(f'Child process PID: {pid} found {child_list}')
+    #             # self.write_child_nums_to_file(pid, child_list)
+    #         if os.waitpid(pid, 0):
+    #             child_processes.remove(pid)
+    #             if not child_processes:
+    #                 runtime = round((time.time() - start_time) * 1000)
+    #                 print(f'Armstrong took {runtime} milliseconds')
+    #     else:  # pid < 0
+    #         raise OSError('Fork failed.')
 
 def write_child_nums_to_file(pid, child_nums):
     with open(f'nums/{pid}.txt', 'w') as f:
