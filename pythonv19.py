@@ -43,6 +43,7 @@ def main():
     program_runtime = round((time.time() - start_time) * 1000)
     print(f'It took {program_runtime} milliseconds to complete this task.')
     print(f'Armstrong numbers found: {read_child_nums_from_file()}')
+    clear_child_nums_files()
 
 
 def write_child_nums_to_file(pid, child_nums):
@@ -63,6 +64,12 @@ def read_child_nums_from_file():
                 for num in nums:
                     all_nums += f'{num}, '
     return all_nums[:-2]
+
+def clear_child_nums_files():
+    for file in os.listdir(f'nums/'):
+        if file != '.DS_Store':
+            try:
+                os.remove(f'nums/{file}')
 
 
 
