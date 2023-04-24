@@ -7,6 +7,8 @@ import time
 def main():
     num, proc = get_input()
     start_time = time.time()
+    if not os.path.exists(f'nums'):
+        os.mkdir(f'{os.getcwd()}/nums')
     child_processes = []
     child_list = []
     for p in range(1, proc + 1):
@@ -44,8 +46,6 @@ def main():
 
 
 def write_child_nums_to_file(pid, child_nums):
-    if not os.path.exists(f'nums'):
-        os.mkdir(f'nums')
     with open(f'nums/{pid}.txt', 'w') as f:
         for num in child_nums:
             f.write(f'{num}\n')
