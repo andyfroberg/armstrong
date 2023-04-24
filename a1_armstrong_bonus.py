@@ -4,7 +4,7 @@ import os
 import time
 
 
-def main():
+def main(argc, argv):
     num, proc = get_input()
     start_time = time.time()
     child_processes = []
